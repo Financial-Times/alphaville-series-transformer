@@ -2,7 +2,7 @@
 
 [![Circle CI](https://circleci.com/gh/Financial-Times/v1-series-transformer/tree/master.png?style=shield)](https://circleci.com/gh/Financial-Times/v1-series-transformer/tree/master)
 
-Retrieves Organisations taxonomy from TME and transforms the series to the internal UP json model.
+Retrieves Series taxonomy from TME and transforms the series to the internal UP json model.
 The service exposes endpoints for getting all the series and for getting series by uuid.
 
 # Usage

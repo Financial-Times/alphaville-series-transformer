@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestGetOrganisations(t *testing.T) {
+func TestGetSeries(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
 		name    string
