@@ -34,7 +34,7 @@ func TestGetSeries(t *testing.T) {
 	}
 }
 
-func TestGetOrganisationByUuid(t *testing.T) {
+func TestGetSeriesByUuid(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
 		name  string
@@ -47,7 +47,7 @@ func TestGetOrganisationByUuid(t *testing.T) {
 		{"Success", []term{term{CanonicalName: "European Union", RawID: "Nstein_GL_US_NY_Municipality_942968"}},
 			"6a7edb42-c27a-3186-a0b9-7e3cdc91e16b", series{UUID: "6a7edb42-c27a-3186-a0b9-7e3cdc91e16b", ProperName: "European Union", Identifiers: []identifier{
 				identifier{Authority: tmeAuthority, IdentifierValue: "TnN0ZWluX0dMX1VTX05ZX011bmljaXBhbGl0eV85NDI5Njg=-T04="},
-				identifier{Authority: uppAuthority, IdentifierValue: "6a7edb42-c27a-3186-a0b9-7e3cdc91e16b"}}, Type: "Organisation"}, true, nil},
+				identifier{Authority: uppAuthority, IdentifierValue: "6a7edb42-c27a-3186-a0b9-7e3cdc91e16b"}}, Type: "Series"}, true, nil},
 		{"Not found", []term{term{CanonicalName: "European Union", RawID: "Nstein_GL_US_NY_Municipality_942968"}},
 			"some uuid", series{}, false, nil},
 		{"Error on init", []term{}, "some uuid", series{}, false, nil},
@@ -56,8 +56,8 @@ func TestGetOrganisationByUuid(t *testing.T) {
 		repo := dummyRepo{terms: test.terms, err: test.err}
 		service := newOrgService(&repo, "", "ON", 10000, "cache.db")
 		time.Sleep(3 * time.Second) //waiting initialization to be finished
-		actualOrganisation, found, err := service.getOrgByUUID(test.uuid)
-		assert.Equal(test.series, actualOrganisation, fmt.Sprintf("%s: Expected seriesansiation incorrect", test.name))
+		actualSeries, found, err := service.getOrgByUUID(test.uuid)
+		assert.Equal(test.series, actualSeries, fmt.Sprintf("%s: Expected seriesansiation incorrect", test.name))
 		assert.Equal(test.found, found)
 		assert.Equal(test.err, err)
 	}

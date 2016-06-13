@@ -16,7 +16,7 @@ func transformOrg(tmeTerm term, taxonomyName string) series {
 			identifier{Authority: tmeAuthority, IdentifierValue: tmeIdentifier},
 			identifier{Authority: uppAuthority, IdentifierValue: seriesUUID},
 		},
-		Type: "Organisation",
+		Type: "Series",
 	}
 }
 

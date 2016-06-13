@@ -11,7 +11,7 @@ import (
 
 const testUUID = "bba39990-c78d-3629-ae83-808c333c6dbc"
 const getSeriesResponse = "[{\"apiUrl\":\"http://localhost:8080/transformers/series/bba39990-c78d-3629-ae83-808c333c6dbc\"}]\n"
-const getOrganisationByUUIDResponse = "{\"uuid\":\"bba39990-c78d-3629-ae83-808c333c6dbc\",\"properName\":\"European Union\",\"type\":\"Organisation\",\"identifiers\":[{" +
+const getSeriesByUUIDResponse = "{\"uuid\":\"bba39990-c78d-3629-ae83-808c333c6dbc\",\"properName\":\"European Union\",\"type\":\"Series\",\"identifiers\":[{" +
 	"\"authority\":\"http://api.ft.com/system/FT-TME\"," +
 	"\"identifierValue\":\"MTE3-U3ViamVjdHM=\"" +
 	"}]}\n"
@@ -26,7 +26,7 @@ func TestHandlers(t *testing.T) {
 		contentType  string // Contents of the Content-Type header
 		body         string
 	}{
-		{"Success - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: true, initialised: true, series: []series{series{UUID: testUUID, ProperName: "European Union", Identifiers: []identifier{identifier{Authority: "http://api.ft.com/system/FT-TME", IdentifierValue: "MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}}, http.StatusOK, "application/json", getOrganisationByUUIDResponse},
+		{"Success - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: true, initialised: true, series: []series{series{UUID: testUUID, ProperName: "European Union", Identifiers: []identifier{identifier{Authority: "http://api.ft.com/system/FT-TME", IdentifierValue: "MTE3-U3ViamVjdHM="}}, Type: "Series"}}}, http.StatusOK, "application/json", getSeriesByUUIDResponse},
 		{"Not found - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: true, series: []series{series{}}}, http.StatusNotFound, "application/json", ""},
 		{"Service unavailable - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: false, series: []series{}}, http.StatusServiceUnavailable, "application/json", ""},
 		{"Success - get series", newRequest("GET", "/transformers/series"), &dummyService{found: true, initialised: true, series: []series{series{UUID: testUUID}}}, http.StatusOK, "application/json", getSeriesResponse},
