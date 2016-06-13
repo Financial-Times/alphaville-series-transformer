@@ -6,15 +6,15 @@ import (
 	"github.com/pborman/uuid"
 )
 
-func transformOrg(tmeTerm term, taxonomyName string) org {
+func transformOrg(tmeTerm term, taxonomyName string) series {
 	tmeIdentifier := buildTmeIdentifier(tmeTerm.RawID, taxonomyName)
-	orgUUID := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
-	return org{
-		UUID:       orgUUID,
+	seriesUUID := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
+	return series{
+		UUID:       seriesUUID,
 		ProperName: tmeTerm.CanonicalName,
 		Identifiers: []identifier{
 			identifier{Authority: tmeAuthority, IdentifierValue: tmeIdentifier},
-			identifier{Authority: uppAuthority, IdentifierValue: orgUUID},
+			identifier{Authority: uppAuthority, IdentifierValue: seriesUUID},
 		},
 		Type: "Organisation",
 	}
@@ -26,10 +26,10 @@ func buildTmeIdentifier(rawID string, tmeTermTaxonomyName string) string {
 	return id + "-" + taxonomyName
 }
 
-type orgTransformer struct {
+type seriesTransformer struct {
 }
 
-func (*orgTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
+func (*seriesTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
 	taxonomy := taxonomy{}
 	err := xml.Unmarshal(contents, &taxonomy)
 	if err != nil {
@@ -42,7 +42,7 @@ func (*orgTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error
 	return interfaces, nil
 }
 
-func (*orgTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
+func (*seriesTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
 	dummyTerm := term{}
 	err := xml.Unmarshal(content, &dummyTerm)
 	if err != nil {

@@ -12,21 +12,21 @@ import (
 )
 
 const (
-	cacheBucket  = "org"
+	cacheBucket  = "series"
 	uppAuthority = "http://api.ft.com/system/FT-UPP"
 	tmeAuthority = "http://api.ft.com/system/FT-TME"
 )
 
 type seriesService interface {
-	getOrgs() ([]orgLink, bool)
-	getOrgByUUID(uuid string) (org, bool, error)
+	getOrgs() ([]seriesLink, bool)
+	getOrgByUUID(uuid string) (series, bool, error)
 	isInitialised() bool
 }
 
-type orgServiceImpl struct {
+type seriesServiceImpl struct {
 	repository    tmereader.Repository
 	baseURL       string
-	orgLinks      []orgLink
+	seriesLinks      []seriesLink
 	taxonomyName  string
 	maxTmeRecords int
 	initialised   bool
@@ -34,8 +34,8 @@ type orgServiceImpl struct {
 }
 
 func newOrgService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) seriesService {
-	s := &orgServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: false, cacheFileName: cacheFileName}
-	go func(service *orgServiceImpl) {
+	s := &seriesServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: false, cacheFileName: cacheFileName}
+	go func(service *seriesServiceImpl) {
 		err := service.init()
 		if err != nil {
 			log.Errorf("Error while creating OrgService: [%v]", err.Error())
@@ -45,11 +45,11 @@ func newOrgService(repo tmereader.Repository, baseURL string, taxonomyName strin
 	return s
 }
 
-func (s *orgServiceImpl) isInitialised() bool {
+func (s *seriesServiceImpl) isInitialised() bool {
 	return s.initialised
 }
 
-func (s *orgServiceImpl) init() error {
+func (s *seriesServiceImpl) init() error {
 	db, err := bolt.Open(s.cacheFileName, 0600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		log.Errorf("ERROR opening cache file for init: %v", err.Error())
@@ -76,7 +76,7 @@ func (s *orgServiceImpl) init() error {
 		responseCount += s.maxTmeRecords
 	}
 	wg.Wait()
-	log.Printf("Added %d series links\n", len(s.orgLinks))
+	log.Printf("Added %d series links\n", len(s.seriesLinks))
 	return nil
 }
 
@@ -95,18 +95,18 @@ func createCacheBucket(db *bolt.DB) error {
 
 }
 
-func (s *orgServiceImpl) getOrgs() ([]orgLink, bool) {
-	if len(s.orgLinks) > 0 {
-		return s.orgLinks, true
+func (s *seriesServiceImpl) getOrgs() ([]seriesLink, bool) {
+	if len(s.seriesLinks) > 0 {
+		return s.seriesLinks, true
 	}
-	return s.orgLinks, false
+	return s.seriesLinks, false
 }
 
-func (s *orgServiceImpl) getOrgByUUID(uuid string) (org, bool, error) {
+func (s *seriesServiceImpl) getOrgByUUID(uuid string) (series, bool, error) {
 	db, err := bolt.Open(s.cacheFileName, 0600, &bolt.Options{ReadOnly: true, Timeout: 10 * time.Second})
 	if err != nil {
 		log.Errorf("ERROR opening cache file for [%v]: %v", uuid, err.Error())
-		return org{}, false, err
+		return series{}, false, err
 	}
 	defer db.Close()
 	var cachedValue []byte
@@ -121,36 +121,36 @@ func (s *orgServiceImpl) getOrgByUUID(uuid string) (org, bool, error) {
 
 	if err != nil {
 		log.Errorf("ERROR reading from cache file for [%v]: %v", uuid, err.Error())
-		return org{}, false, err
+		return series{}, false, err
 	}
 	if cachedValue == nil || len(cachedValue) == 0 {
 		log.Infof("INFO No cached value for [%v]", uuid)
-		return org{}, false, nil
+		return series{}, false, nil
 	}
-	var cachedOrg org
+	var cachedOrg series
 	err = json.Unmarshal(cachedValue, &cachedOrg)
 	if err != nil {
 		log.Errorf("ERROR unmarshalling cached value for [%v]: %v", uuid, err.Error())
-		return org{}, true, err
+		return series{}, true, err
 	}
 	return cachedOrg, true, nil
 
 }
 
-func (s *orgServiceImpl) initOrgsMap(terms []interface{}, db *bolt.DB, wg *sync.WaitGroup) {
-	var cacheToBeWritten []org
+func (s *seriesServiceImpl) initOrgsMap(terms []interface{}, db *bolt.DB, wg *sync.WaitGroup) {
+	var cacheToBeWritten []series
 	for _, iTerm := range terms {
 		t := iTerm.(term)
 		tmeIdentifier := buildTmeIdentifier(t.RawID, s.taxonomyName)
 		uuid := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
-		s.orgLinks = append(s.orgLinks, orgLink{APIURL: s.baseURL + uuid})
+		s.seriesLinks = append(s.seriesLinks, seriesLink{APIURL: s.baseURL + uuid})
 		cacheToBeWritten = append(cacheToBeWritten, transformOrg(t, s.taxonomyName))
 	}
 
 	go storeOrgToCache(db, cacheToBeWritten, wg)
 }
 
-func storeOrgToCache(db *bolt.DB, cacheToBeWritten []org, wg *sync.WaitGroup) {
+func storeOrgToCache(db *bolt.DB, cacheToBeWritten []series, wg *sync.WaitGroup) {
 	defer wg.Done()
 	err := db.Batch(func(tx *bolt.Tx) error {
 

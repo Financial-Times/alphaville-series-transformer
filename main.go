@@ -81,7 +81,7 @@ func main() {
 
 	app.Action = func() {
 		client := getResilientClient()
-		modelTransformer := new(orgTransformer)
+		modelTransformer := new(seriesTransformer)
 		s := newOrgService(
 			tmereader.NewTmeRepository(
 				client,

@@ -1,7 +1,7 @@
 package main
 
-//model aligned with v2-org-transformer
-type org struct {
+//model aligned with v2-series-transformer
+type series struct {
 	UUID        string       `json:"uuid"`
 	ProperName  string       `json:"properName"`
 	Type        string       `json:"type"`
@@ -13,6 +13,6 @@ type identifier struct {
 	IdentifierValue string `json:"identifierValue"`
 }
 
-type orgLink struct {
+type seriesLink struct {
 	APIURL string `json:"apiUrl"`
 }

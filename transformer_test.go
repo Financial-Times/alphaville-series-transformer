@@ -11,16 +11,16 @@ func TestTransform(t *testing.T) {
 	tests := []struct {
 		name string
 		term term
-		org  org
+		series  series
 	}{
-		{"Trasform term to location", term{CanonicalName: "European Union", RawID: "Nstein_GL_US_NY_Municipality_942968"}, org{UUID: "6a7edb42-c27a-3186-a0b9-7e3cdc91e16b", ProperName: "European Union", Identifiers: []identifier{
+		{"Trasform term to location", term{CanonicalName: "European Union", RawID: "Nstein_GL_US_NY_Municipality_942968"}, series{UUID: "6a7edb42-c27a-3186-a0b9-7e3cdc91e16b", ProperName: "European Union", Identifiers: []identifier{
 			identifier{Authority: tmeAuthority, IdentifierValue: "TnN0ZWluX0dMX1VTX05ZX011bmljaXBhbGl0eV85NDI5Njg=-T04="}, identifier{Authority: uppAuthority, IdentifierValue: "6a7edb42-c27a-3186-a0b9-7e3cdc91e16b"}}, Type: "Organisation"}},
 	}
 
 	for _, test := range tests {
 		expectedLocation := transformOrg(test.term, "ON")
 
-		assert.Equal(test.org, expectedLocation, fmt.Sprintf("%s: Expected location incorrect", test.name))
+		assert.Equal(test.series, expectedLocation, fmt.Sprintf("%s: Expected location incorrect", test.name))
 	}
 
 }

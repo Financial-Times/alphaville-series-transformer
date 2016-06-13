@@ -26,12 +26,12 @@ func TestHandlers(t *testing.T) {
 		contentType  string // Contents of the Content-Type header
 		body         string
 	}{
-		{"Success - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID, ProperName: "European Union", Identifiers: []identifier{identifier{Authority: "http://api.ft.com/system/FT-TME", IdentifierValue: "MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}}, http.StatusOK, "application/json", getOrganisationByUUIDResponse},
-		{"Not found - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: true, series: []org{org{}}}, http.StatusNotFound, "application/json", ""},
-		{"Service unavailable - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
-		{"Success - get series", newRequest("GET", "/transformers/series"), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID}}}, http.StatusOK, "application/json", getOrganisationsResponse},
-		{"Not found - get series", newRequest("GET", "/transformers/series"), &dummyService{found: false, initialised: true, series: []org{}}, http.StatusNotFound, "application/json", ""},
-		{"Service unavailable - get series", newRequest("GET", "/transformers/series"), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
+		{"Success - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: true, initialised: true, series: []series{series{UUID: testUUID, ProperName: "European Union", Identifiers: []identifier{identifier{Authority: "http://api.ft.com/system/FT-TME", IdentifierValue: "MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}}, http.StatusOK, "application/json", getOrganisationByUUIDResponse},
+		{"Not found - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: true, series: []series{series{}}}, http.StatusNotFound, "application/json", ""},
+		{"Service unavailable - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: false, series: []series{}}, http.StatusServiceUnavailable, "application/json", ""},
+		{"Success - get series", newRequest("GET", "/transformers/series"), &dummyService{found: true, initialised: true, series: []series{series{UUID: testUUID}}}, http.StatusOK, "application/json", getOrganisationsResponse},
+		{"Not found - get series", newRequest("GET", "/transformers/series"), &dummyService{found: false, initialised: true, series: []series{}}, http.StatusNotFound, "application/json", ""},
+		{"Service unavailable - get series", newRequest("GET", "/transformers/series"), &dummyService{found: false, initialised: false, series: []series{}}, http.StatusServiceUnavailable, "application/json", ""},
 	}
 
 	for _, test := range tests {
@@ -60,19 +60,19 @@ func router(s seriesService) *mux.Router {
 
 type dummyService struct {
 	found       bool
-	series        []org
+	series        []series
 	initialised bool
 }
 
-func (s *dummyService) getOrgs() ([]orgLink, bool) {
-	var orgLinks []orgLink
+func (s *dummyService) getOrgs() ([]seriesLink, bool) {
+	var seriesLinks []seriesLink
 	for _, sub := range s.series {
-		orgLinks = append(orgLinks, orgLink{APIURL: "http://localhost:8080/transformers/series/" + sub.UUID})
+		seriesLinks = append(seriesLinks, seriesLink{APIURL: "http://localhost:8080/transformers/series/" + sub.UUID})
 	}
-	return orgLinks, s.found
+	return seriesLinks, s.found
 }
 
-func (s *dummyService) getOrgByUUID(uuid string) (org, bool, error) {
+func (s *dummyService) getOrgByUUID(uuid string) (series, bool, error) {
 	return s.series[0], s.found, nil
 }
 
