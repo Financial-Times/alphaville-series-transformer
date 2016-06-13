@@ -3,7 +3,7 @@
 [![Circle CI](https://circleci.com/gh/Financial-Times/v1-series-transformer/tree/master.png?style=shield)](https://circleci.com/gh/Financial-Times/v1-series-transformer/tree/master)
 
 Retrieves Organisations taxonomy from TME and transforms the series to the internal UP json model.
-The service exposes endpoints for getting all the series and for getting organisation by uuid.
+The service exposes endpoints for getting all the series and for getting series by uuid.
 
 # Usage
 `go get -u github.com/Financial-Times/v1-series-transformer`
@@ -30,4 +30,4 @@ $GOPATH/bin/v1-series-transformer
 # Endpoints
 
 * `/transformers/series` - Get all series as APIURLs
-* `/transformers/series/{uuid}` - Get organisation data of the given uuid
+* `/transformers/series/{uuid}` - Get series data of the given uuid

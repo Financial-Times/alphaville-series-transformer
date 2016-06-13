@@ -26,9 +26,9 @@ func TestHandlers(t *testing.T) {
 		contentType  string // Contents of the Content-Type header
 		body         string
 	}{
-		{"Success - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID, ProperName: "European Union", Identifiers: []identifier{identifier{Authority: "http://api.ft.com/system/FT-TME", IdentifierValue: "MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}}, http.StatusOK, "application/json", getOrganisationByUUIDResponse},
-		{"Not found - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: true, series: []org{org{}}}, http.StatusNotFound, "application/json", ""},
-		{"Service unavailable - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
+		{"Success - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID, ProperName: "European Union", Identifiers: []identifier{identifier{Authority: "http://api.ft.com/system/FT-TME", IdentifierValue: "MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}}, http.StatusOK, "application/json", getOrganisationByUUIDResponse},
+		{"Not found - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: true, series: []org{org{}}}, http.StatusNotFound, "application/json", ""},
+		{"Service unavailable - get series by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
 		{"Success - get series", newRequest("GET", "/transformers/series"), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID}}}, http.StatusOK, "application/json", getOrganisationsResponse},
 		{"Not found - get series", newRequest("GET", "/transformers/series"), &dummyService{found: false, initialised: true, series: []org{}}, http.StatusNotFound, "application/json", ""},
 		{"Service unavailable - get series", newRequest("GET", "/transformers/series"), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
