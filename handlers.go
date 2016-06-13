@@ -26,7 +26,7 @@ func (h *seriesHandler) getSeries(writer http.ResponseWriter, req *http.Request)
 	writeJSONResponse(obj, found, writer)
 }
 
-func (h *seriesHandler) getOrgByUUID(writer http.ResponseWriter, req *http.Request) {
+func (h *seriesHandler) getSeriesByUUID(writer http.ResponseWriter, req *http.Request) {
 	if !h.service.isInitialised() {
 		writer.WriteHeader(http.StatusServiceUnavailable)
 		return
@@ -35,7 +35,7 @@ func (h *seriesHandler) getOrgByUUID(writer http.ResponseWriter, req *http.Reque
 	vars := mux.Vars(req)
 	uuid := vars["uuid"]
 
-	obj, found, err := h.service.getOrgByUUID(uuid)
+	obj, found, err := h.service.getSeriesByUUID(uuid)
 	if err != nil {
 		writeJSONError(writer, err.Error(), http.StatusInternalServerError)
 	}

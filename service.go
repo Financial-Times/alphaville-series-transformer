@@ -19,7 +19,7 @@ const (
 
 type seriesService interface {
 	getSeries() ([]seriesLink, bool)
-	getOrgByUUID(uuid string) (series, bool, error)
+	getSeriesByUUID(uuid string) (series, bool, error)
 	isInitialised() bool
 }
 
@@ -33,12 +33,12 @@ type seriesServiceImpl struct {
 	cacheFileName string
 }
 
-func newOrgService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) seriesService {
+func newSeriesService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) seriesService {
 	s := &seriesServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: false, cacheFileName: cacheFileName}
 	go func(service *seriesServiceImpl) {
 		err := service.init()
 		if err != nil {
-			log.Errorf("Error while creating OrgService: [%v]", err.Error())
+			log.Errorf("Error while creating SeriesService: [%v]", err.Error())
 		}
 		service.initialised = true
 	}(s)
@@ -102,7 +102,7 @@ func (s *seriesServiceImpl) getSeries() ([]seriesLink, bool) {
 	return s.seriesLinks, false
 }
 
-func (s *seriesServiceImpl) getOrgByUUID(uuid string) (series, bool, error) {
+func (s *seriesServiceImpl) getSeriesByUUID(uuid string) (series, bool, error) {
 	db, err := bolt.Open(s.cacheFileName, 0600, &bolt.Options{ReadOnly: true, Timeout: 10 * time.Second})
 	if err != nil {
 		log.Errorf("ERROR opening cache file for [%v]: %v", uuid, err.Error())
@@ -127,13 +127,13 @@ func (s *seriesServiceImpl) getOrgByUUID(uuid string) (series, bool, error) {
 		log.Infof("INFO No cached value for [%v]", uuid)
 		return series{}, false, nil
 	}
-	var cachedOrg series
-	err = json.Unmarshal(cachedValue, &cachedOrg)
+	var cachedSeries series
+	err = json.Unmarshal(cachedValue, &cachedSeries)
 	if err != nil {
 		log.Errorf("ERROR unmarshalling cached value for [%v]: %v", uuid, err.Error())
 		return series{}, true, err
 	}
-	return cachedOrg, true, nil
+	return cachedSeries, true, nil
 
 }
 
@@ -144,13 +144,13 @@ func (s *seriesServiceImpl) initSeriesMap(terms []interface{}, db *bolt.DB, wg *
 		tmeIdentifier := buildTmeIdentifier(t.RawID, s.taxonomyName)
 		uuid := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
 		s.seriesLinks = append(s.seriesLinks, seriesLink{APIURL: s.baseURL + uuid})
-		cacheToBeWritten = append(cacheToBeWritten, transformOrg(t, s.taxonomyName))
+		cacheToBeWritten = append(cacheToBeWritten, transformSeries(t, s.taxonomyName))
 	}
 
-	go storeOrgToCache(db, cacheToBeWritten, wg)
+	go storeSeriesToCache(db, cacheToBeWritten, wg)
 }
 
-func storeOrgToCache(db *bolt.DB, cacheToBeWritten []series, wg *sync.WaitGroup) {
+func storeSeriesToCache(db *bolt.DB, cacheToBeWritten []series, wg *sync.WaitGroup) {
 	defer wg.Done()
 	err := db.Batch(func(tx *bolt.Tx) error {
 
@@ -158,12 +158,12 @@ func storeOrgToCache(db *bolt.DB, cacheToBeWritten []series, wg *sync.WaitGroup)
 		if bucket == nil {
 			return fmt.Errorf("Cache bucket [%v] not found!", cacheBucket)
 		}
-		for _, anOrg := range cacheToBeWritten {
-			marshalledOrg, err := json.Marshal(anOrg)
+		for _, anSeries := range cacheToBeWritten {
+			marshalledSeries, err := json.Marshal(anSeries)
 			if err != nil {
 				return err
 			}
-			err = bucket.Put([]byte(anOrg.UUID), marshalledOrg)
+			err = bucket.Put([]byte(anSeries.UUID), marshalledSeries)
 			if err != nil {
 				return err
 			}

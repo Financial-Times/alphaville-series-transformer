@@ -6,7 +6,7 @@ import (
 	"github.com/pborman/uuid"
 )
 
-func transformOrg(tmeTerm term, taxonomyName string) series {
+func transformSeries(tmeTerm term, taxonomyName string) series {
 	tmeIdentifier := buildTmeIdentifier(tmeTerm.RawID, taxonomyName)
 	seriesUUID := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
 	return series{

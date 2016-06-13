@@ -54,7 +54,7 @@ func router(s seriesService) *mux.Router {
 	m := mux.NewRouter()
 	h := newSeriesHandler(s)
 	m.HandleFunc("/transformers/series", h.getSeries).Methods("GET")
-	m.HandleFunc("/transformers/series/{uuid}", h.getOrgByUUID).Methods("GET")
+	m.HandleFunc("/transformers/series/{uuid}", h.getSeriesByUUID).Methods("GET")
 	return m
 }
 
@@ -72,7 +72,7 @@ func (s *dummyService) getSeries() ([]seriesLink, bool) {
 	return seriesLinks, s.found
 }
 
-func (s *dummyService) getOrgByUUID(uuid string) (series, bool, error) {
+func (s *dummyService) getSeriesByUUID(uuid string) (series, bool, error) {
 	return s.series[0], s.found, nil
 }
 

@@ -26,10 +26,10 @@ func TestGetSeries(t *testing.T) {
 
 	for _, test := range tests {
 		repo := dummyRepo{terms: test.terms, err: test.err}
-		service := newOrgService(&repo, test.baseURL, "ON", 10000, "cache.db")
+		service := newSeriesService(&repo, test.baseURL, "ON", 10000, "cache.db")
 		time.Sleep(3 * time.Second) //waiting initialization to be finished
-		actualOrgansiations, found := service.getSeries()
-		assert.Equal(test.series, actualOrgansiations, fmt.Sprintf("%s: Expected seriesansiations link incorrect", test.name))
+		actualSeriesansiations, found := service.getSeries()
+		assert.Equal(test.series, actualSeriesansiations, fmt.Sprintf("%s: Expected seriesansiations link incorrect", test.name))
 		assert.Equal(test.found, found)
 	}
 }
@@ -54,9 +54,9 @@ func TestGetSeriesByUuid(t *testing.T) {
 	}
 	for _, test := range tests {
 		repo := dummyRepo{terms: test.terms, err: test.err}
-		service := newOrgService(&repo, "", "ON", 10000, "cache.db")
+		service := newSeriesService(&repo, "", "ON", 10000, "cache.db")
 		time.Sleep(3 * time.Second) //waiting initialization to be finished
-		actualSeries, found, err := service.getOrgByUUID(test.uuid)
+		actualSeries, found, err := service.getSeriesByUUID(test.uuid)
 		assert.Equal(test.series, actualSeries, fmt.Sprintf("%s: Expected seriesansiation incorrect", test.name))
 		assert.Equal(test.found, found)
 		assert.Equal(test.err, err)

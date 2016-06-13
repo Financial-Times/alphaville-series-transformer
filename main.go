@@ -82,7 +82,7 @@ func main() {
 	app.Action = func() {
 		client := getResilientClient()
 		modelTransformer := new(seriesTransformer)
-		s := newOrgService(
+		s := newSeriesService(
 			tmereader.NewTmeRepository(
 				client,
 				*tmeBaseURL,
@@ -101,7 +101,7 @@ func main() {
 		h := newSeriesHandler(s)
 		m := mux.NewRouter()
 		m.HandleFunc("/transformers/series", h.getSeries).Methods("GET")
-		m.HandleFunc("/transformers/series/{uuid}", h.getOrgByUUID).Methods("GET")
+		m.HandleFunc("/transformers/series/{uuid}", h.getSeriesByUUID).Methods("GET")
 		http.Handle("/", m)
 
 		log.Printf("listening on %d", *port)

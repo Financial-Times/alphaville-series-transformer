@@ -18,7 +18,7 @@ func TestTransform(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		expectedLocation := transformOrg(test.term, "ON")
+		expectedLocation := transformSeries(test.term, "ON")
 
 		assert.Equal(test.series, expectedLocation, fmt.Sprintf("%s: Expected location incorrect", test.name))
 	}
