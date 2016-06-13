@@ -10,7 +10,7 @@ import (
 )
 
 const testUUID = "bba39990-c78d-3629-ae83-808c333c6dbc"
-const getOrganisationsResponse = "[{\"apiUrl\":\"http://localhost:8080/transformers/organisations/bba39990-c78d-3629-ae83-808c333c6dbc\"}]\n"
+const getOrganisationsResponse = "[{\"apiUrl\":\"http://localhost:8080/transformers/series/bba39990-c78d-3629-ae83-808c333c6dbc\"}]\n"
 const getOrganisationByUUIDResponse = "{\"uuid\":\"bba39990-c78d-3629-ae83-808c333c6dbc\",\"properName\":\"European Union\",\"type\":\"Organisation\",\"identifiers\":[{" +
 	"\"authority\":\"http://api.ft.com/system/FT-TME\"," +
 	"\"identifierValue\":\"MTE3-U3ViamVjdHM=\"" +
@@ -26,12 +26,12 @@ func TestHandlers(t *testing.T) {
 		contentType  string // Contents of the Content-Type header
 		body         string
 	}{
-		{"Success - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/organisations/%s", testUUID)), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID, ProperName: "European Union", Identifiers: []identifier{identifier{Authority: "http://api.ft.com/system/FT-TME", IdentifierValue: "MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}}, http.StatusOK, "application/json", getOrganisationByUUIDResponse},
-		{"Not found - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/organisations/%s", testUUID)), &dummyService{found: false, initialised: true, series: []org{org{}}}, http.StatusNotFound, "application/json", ""},
-		{"Service unavailable - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/organisations/%s", testUUID)), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
-		{"Success - get organisations", newRequest("GET", "/transformers/organisations"), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID}}}, http.StatusOK, "application/json", getOrganisationsResponse},
-		{"Not found - get organisations", newRequest("GET", "/transformers/organisations"), &dummyService{found: false, initialised: true, series: []org{}}, http.StatusNotFound, "application/json", ""},
-		{"Service unavailable - get organisations", newRequest("GET", "/transformers/organisations"), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
+		{"Success - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID, ProperName: "European Union", Identifiers: []identifier{identifier{Authority: "http://api.ft.com/system/FT-TME", IdentifierValue: "MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}}, http.StatusOK, "application/json", getOrganisationByUUIDResponse},
+		{"Not found - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: true, series: []org{org{}}}, http.StatusNotFound, "application/json", ""},
+		{"Service unavailable - get organisation by uuid", newRequest("GET", fmt.Sprintf("/transformers/series/%s", testUUID)), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
+		{"Success - get series", newRequest("GET", "/transformers/series"), &dummyService{found: true, initialised: true, series: []org{org{UUID: testUUID}}}, http.StatusOK, "application/json", getOrganisationsResponse},
+		{"Not found - get series", newRequest("GET", "/transformers/series"), &dummyService{found: false, initialised: true, series: []org{}}, http.StatusNotFound, "application/json", ""},
+		{"Service unavailable - get series", newRequest("GET", "/transformers/series"), &dummyService{found: false, initialised: false, series: []org{}}, http.StatusServiceUnavailable, "application/json", ""},
 	}
 
 	for _, test := range tests {
@@ -53,8 +53,8 @@ func newRequest(method, url string) *http.Request {
 func router(s seriesService) *mux.Router {
 	m := mux.NewRouter()
 	h := newOrgsHandler(s)
-	m.HandleFunc("/transformers/organisations", h.getOrgs).Methods("GET")
-	m.HandleFunc("/transformers/organisations/{uuid}", h.getOrgByUUID).Methods("GET")
+	m.HandleFunc("/transformers/series", h.getOrgs).Methods("GET")
+	m.HandleFunc("/transformers/series/{uuid}", h.getOrgByUUID).Methods("GET")
 	return m
 }
 
@@ -67,7 +67,7 @@ type dummyService struct {
 func (s *dummyService) getOrgs() ([]orgLink, bool) {
 	var orgLinks []orgLink
 	for _, sub := range s.series {
-		orgLinks = append(orgLinks, orgLink{APIURL: "http://localhost:8080/transformers/organisations/" + sub.UUID})
+		orgLinks = append(orgLinks, orgLink{APIURL: "http://localhost:8080/transformers/series/" + sub.UUID})
 	}
 	return orgLinks, s.found
 }

@@ -42,7 +42,7 @@ func main() {
 	})
 	baseURL := app.String(cli.StringOpt{
 		Name:   "base-url",
-		Value:  "http://localhost:8080/transformers/organisations/",
+		Value:  "http://localhost:8080/transformers/series/",
 		Desc:   "Base url",
 		EnvVar: "BASE_URL",
 	})
@@ -100,8 +100,8 @@ func main() {
 
 		h := newOrgsHandler(s)
 		m := mux.NewRouter()
-		m.HandleFunc("/transformers/organisations", h.getOrgs).Methods("GET")
-		m.HandleFunc("/transformers/organisations/{uuid}", h.getOrgByUUID).Methods("GET")
+		m.HandleFunc("/transformers/series", h.getOrgs).Methods("GET")
+		m.HandleFunc("/transformers/series/{uuid}", h.getOrgByUUID).Methods("GET")
 		http.Handle("/", m)
 
 		log.Printf("listening on %d", *port)

@@ -2,17 +2,17 @@
 
 [![Circle CI](https://circleci.com/gh/Financial-Times/v1-series-transformer/tree/master.png?style=shield)](https://circleci.com/gh/Financial-Times/v1-series-transformer/tree/master)
 
-Retrieves Organisations taxonomy from TME and transforms the organisations to the internal UP json model.
-The service exposes endpoints for getting all the organisations and for getting organisation by uuid.
+Retrieves Organisations taxonomy from TME and transforms the series to the internal UP json model.
+The service exposes endpoints for getting all the series and for getting organisation by uuid.
 
 # Usage
 `go get -u github.com/Financial-Times/v1-series-transformer`
 
-`$GOPATH/bin/v1-series-transformer --port=8080 --base-url="http://localhost:8080/transformers/organisations/" --tme-base-url="https://tme.ft.com" --tme-username="user" --tme-password="pass" --token="token"`
+`$GOPATH/bin/v1-series-transformer --port=8080 --base-url="http://localhost:8080/transformers/series/" --tme-base-url="https://tme.ft.com" --tme-username="user" --tme-password="pass" --token="token"`
 
 ```
 export|set PORT=8080
-export|set BASE_URL="http://localhost:8080/transformers/organisations/"
+export|set BASE_URL="http://localhost:8080/transformers/series/"
 export|set TME_BASE_URL="https://tme.ft.com"
 export|set TME_USERNAME="user"
 export|set TME_PASSWORD="pass"
@@ -29,5 +29,5 @@ $GOPATH/bin/v1-series-transformer
 
 # Endpoints
 
-* `/transformers/organisations` - Get all organisations as APIURLs
-* `/transformers/organisations/{uuid}` - Get organisation data of the given uuid
+* `/transformers/series` - Get all series as APIURLs
+* `/transformers/series/{uuid}` - Get organisation data of the given uuid

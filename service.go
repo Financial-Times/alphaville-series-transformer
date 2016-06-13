@@ -61,14 +61,14 @@ func (s *orgServiceImpl) init() error {
 	}
 	var wg sync.WaitGroup
 	responseCount := 0
-	log.Printf("Fetching organisations from TME\n")
+	log.Printf("Fetching series from TME\n")
 	for {
 		terms, err := s.repository.GetTmeTermsFromIndex(responseCount)
 		if err != nil {
 			return err
 		}
 		if len(terms) < 1 {
-			log.Printf("Finished fetching organisations from TME. Waiting subroutines to terminate\n")
+			log.Printf("Finished fetching series from TME. Waiting subroutines to terminate\n")
 			break
 		}
 		wg.Add(1)
