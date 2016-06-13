@@ -98,9 +98,9 @@ func main() {
 			*maxRecords,
 			*cacheFileName)
 
-		h := newOrgsHandler(s)
+		h := newSeriesHandler(s)
 		m := mux.NewRouter()
-		m.HandleFunc("/transformers/series", h.getOrgs).Methods("GET")
+		m.HandleFunc("/transformers/series", h.getSeries).Methods("GET")
 		m.HandleFunc("/transformers/series/{uuid}", h.getOrgByUUID).Methods("GET")
 		http.Handle("/", m)
 

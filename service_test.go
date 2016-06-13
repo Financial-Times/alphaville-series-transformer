@@ -28,7 +28,7 @@ func TestGetSeries(t *testing.T) {
 		repo := dummyRepo{terms: test.terms, err: test.err}
 		service := newOrgService(&repo, test.baseURL, "ON", 10000, "cache.db")
 		time.Sleep(3 * time.Second) //waiting initialization to be finished
-		actualOrgansiations, found := service.getOrgs()
+		actualOrgansiations, found := service.getSeries()
 		assert.Equal(test.series, actualOrgansiations, fmt.Sprintf("%s: Expected seriesansiations link incorrect", test.name))
 		assert.Equal(test.found, found)
 	}

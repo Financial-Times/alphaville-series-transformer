@@ -12,17 +12,17 @@ type seriesHandler struct {
 	service seriesService
 }
 
-func newOrgsHandler(service seriesService) seriesHandler {
+func newSeriesHandler(service seriesService) seriesHandler {
 	return seriesHandler{service: service}
 }
 
-func (h *seriesHandler) getOrgs(writer http.ResponseWriter, req *http.Request) {
+func (h *seriesHandler) getSeries(writer http.ResponseWriter, req *http.Request) {
 	if !h.service.isInitialised() {
 		writer.WriteHeader(http.StatusServiceUnavailable)
 		return
 	}
 
-	obj, found := h.service.getOrgs()
+	obj, found := h.service.getSeries()
 	writeJSONResponse(obj, found, writer)
 }
 

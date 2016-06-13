@@ -52,8 +52,8 @@ func newRequest(method, url string) *http.Request {
 
 func router(s seriesService) *mux.Router {
 	m := mux.NewRouter()
-	h := newOrgsHandler(s)
-	m.HandleFunc("/transformers/series", h.getOrgs).Methods("GET")
+	h := newSeriesHandler(s)
+	m.HandleFunc("/transformers/series", h.getSeries).Methods("GET")
 	m.HandleFunc("/transformers/series/{uuid}", h.getOrgByUUID).Methods("GET")
 	return m
 }
@@ -64,7 +64,7 @@ type dummyService struct {
 	initialised bool
 }
 
-func (s *dummyService) getOrgs() ([]seriesLink, bool) {
+func (s *dummyService) getSeries() ([]seriesLink, bool) {
 	var seriesLinks []seriesLink
 	for _, sub := range s.series {
 		seriesLinks = append(seriesLinks, seriesLink{APIURL: "http://localhost:8080/transformers/series/" + sub.UUID})

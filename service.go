@@ -18,7 +18,7 @@ const (
 )
 
 type seriesService interface {
-	getOrgs() ([]seriesLink, bool)
+	getSeries() ([]seriesLink, bool)
 	getOrgByUUID(uuid string) (series, bool, error)
 	isInitialised() bool
 }
@@ -72,7 +72,7 @@ func (s *seriesServiceImpl) init() error {
 			break
 		}
 		wg.Add(1)
-		go s.initOrgsMap(terms, db, &wg)
+		go s.initSeriesMap(terms, db, &wg)
 		responseCount += s.maxTmeRecords
 	}
 	wg.Wait()
@@ -95,7 +95,7 @@ func createCacheBucket(db *bolt.DB) error {
 
 }
 
-func (s *seriesServiceImpl) getOrgs() ([]seriesLink, bool) {
+func (s *seriesServiceImpl) getSeries() ([]seriesLink, bool) {
 	if len(s.seriesLinks) > 0 {
 		return s.seriesLinks, true
 	}
@@ -137,7 +137,7 @@ func (s *seriesServiceImpl) getOrgByUUID(uuid string) (series, bool, error) {
 
 }
 
-func (s *seriesServiceImpl) initOrgsMap(terms []interface{}, db *bolt.DB, wg *sync.WaitGroup) {
+func (s *seriesServiceImpl) initSeriesMap(terms []interface{}, db *bolt.DB, wg *sync.WaitGroup) {
 	var cacheToBeWritten []series
 	for _, iTerm := range terms {
 		t := iTerm.(term)
