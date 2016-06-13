@@ -14,7 +14,7 @@ func TestGetOrganisations(t *testing.T) {
 		name    string
 		baseURL string
 		terms   []term
-		orgs    []orgLink
+		series    []orgLink
 		found   bool
 		err     error
 	}{
@@ -29,7 +29,7 @@ func TestGetOrganisations(t *testing.T) {
 		service := newOrgService(&repo, test.baseURL, "ON", 10000, "cache.db")
 		time.Sleep(3 * time.Second) //waiting initialization to be finished
 		actualOrgansiations, found := service.getOrgs()
-		assert.Equal(test.orgs, actualOrgansiations, fmt.Sprintf("%s: Expected organsiations link incorrect", test.name))
+		assert.Equal(test.series, actualOrgansiations, fmt.Sprintf("%s: Expected organsiations link incorrect", test.name))
 		assert.Equal(test.found, found)
 	}
 }

@@ -8,15 +8,15 @@ import (
 	"net/http"
 )
 
-type orgsHandler struct {
-	service orgsService
+type seriesHandler struct {
+	service seriesService
 }
 
-func newOrgsHandler(service orgsService) orgsHandler {
-	return orgsHandler{service: service}
+func newOrgsHandler(service seriesService) seriesHandler {
+	return seriesHandler{service: service}
 }
 
-func (h *orgsHandler) getOrgs(writer http.ResponseWriter, req *http.Request) {
+func (h *seriesHandler) getOrgs(writer http.ResponseWriter, req *http.Request) {
 	if !h.service.isInitialised() {
 		writer.WriteHeader(http.StatusServiceUnavailable)
 		return
@@ -26,7 +26,7 @@ func (h *orgsHandler) getOrgs(writer http.ResponseWriter, req *http.Request) {
 	writeJSONResponse(obj, found, writer)
 }
 
-func (h *orgsHandler) getOrgByUUID(writer http.ResponseWriter, req *http.Request) {
+func (h *seriesHandler) getOrgByUUID(writer http.ResponseWriter, req *http.Request) {
 	if !h.service.isInitialised() {
 		writer.WriteHeader(http.StatusServiceUnavailable)
 		return

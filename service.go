@@ -17,7 +17,7 @@ const (
 	tmeAuthority = "http://api.ft.com/system/FT-TME"
 )
 
-type orgsService interface {
+type seriesService interface {
 	getOrgs() ([]orgLink, bool)
 	getOrgByUUID(uuid string) (org, bool, error)
 	isInitialised() bool
@@ -33,7 +33,7 @@ type orgServiceImpl struct {
 	cacheFileName string
 }
 
-func newOrgService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) orgsService {
+func newOrgService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) seriesService {
 	s := &orgServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: false, cacheFileName: cacheFileName}
 	go func(service *orgServiceImpl) {
 		err := service.init()
@@ -76,7 +76,7 @@ func (s *orgServiceImpl) init() error {
 		responseCount += s.maxTmeRecords
 	}
 	wg.Wait()
-	log.Printf("Added %d orgs links\n", len(s.orgLinks))
+	log.Printf("Added %d series links\n", len(s.orgLinks))
 	return nil
 }
 

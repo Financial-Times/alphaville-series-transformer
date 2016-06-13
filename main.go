@@ -21,7 +21,7 @@ func init() {
 }                               N
 
 func main() {
-	app := cli.App("v1-orgs-transformer", "A RESTful API for transforming TME Oranisations to UP json")
+	app := cli.App("v1-series-transformer", "A RESTful API for transforming TME Oranisations to UP json")
 	username := app.String(cli.StringOpt{
 		Name:   "tme-username",
 		Value:  "",
