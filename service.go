@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"sync"
+	"time"
+
 	"github.com/Financial-Times/tme-reader/tmereader"
 	log "github.com/Sirupsen/logrus"
 	"github.com/boltdb/bolt"
 	"github.com/pborman/uuid"
-	"sync"
-	"time"
 )
 
 const (
@@ -26,7 +27,7 @@ type seriesService interface {
 type seriesServiceImpl struct {
 	repository    tmereader.Repository
 	baseURL       string
-	seriesLinks      []seriesLink
+	seriesLinks   []seriesLink
 	taxonomyName  string
 	maxTmeRecords int
 	initialised   bool
@@ -55,26 +56,32 @@ func (s *seriesServiceImpl) init() error {
 		log.Errorf("ERROR opening cache file for init: %v", err.Error())
 		return err
 	}
+
 	defer db.Close()
 	if err = createCacheBucket(db); err != nil {
 		return err
 	}
+
 	var wg sync.WaitGroup
 	responseCount := 0
 	log.Printf("Fetching series from TME\n")
 	for {
 		terms, err := s.repository.GetTmeTermsFromIndex(responseCount)
+
 		if err != nil {
 			return err
 		}
+
 		if len(terms) < 1 {
 			log.Printf("Finished fetching series from TME. Waiting subroutines to terminate\n")
 			break
 		}
+
 		wg.Add(1)
 		go s.initSeriesMap(terms, db, &wg)
 		responseCount += s.maxTmeRecords
 	}
+
 	wg.Wait()
 	log.Printf("Added %d series links\n", len(s.seriesLinks))
 	return nil

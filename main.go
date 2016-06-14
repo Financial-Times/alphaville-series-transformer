@@ -3,6 +3,11 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"net"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/Financial-Times/http-handlers-go/httphandlers"
 	"github.com/Financial-Times/tme-reader/tmereader"
 	log "github.com/Sirupsen/logrus"
@@ -10,15 +15,11 @@ import (
 	"github.com/jawher/mow.cli"
 	"github.com/rcrowley/go-metrics"
 	"github.com/sethgrid/pester"
-	"net"
-	"net/http"
-	"os"
-	"time"
 )
 
 func init() {
 	log.SetFormatter(new(log.JSONFormatter))
-}                               N
+}
 
 func main() {
 	app := cli.App("v1-series-transformer", "A RESTful API for transforming TME Oranisations to UP json")
@@ -77,7 +78,7 @@ func main() {
 		EnvVar: "CACHE_FILE_NAME",
 	})
 
-	tmeTaxonomyName := "ON"
+	tmeTaxonomyName := "topics"
 
 	app.Action = func() {
 		client := getResilientClient()
@@ -92,6 +93,7 @@ func main() {
 				*maxRecords,
 				*batchSize,
 				tmeTaxonomyName,
+				&tmereader.KnowledgeBases{},
 				modelTransformer),
 			*baseURL,
 			tmeTaxonomyName,
