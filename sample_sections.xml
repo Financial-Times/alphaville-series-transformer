@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tx:taxonomy xmlns:b="http://metadata.internal.ft.com/metadata/xsd/metadata_base_v1.0.xsd"
+             xmlns:tm="http://metadata.internal.ft.com/metadata/xsd/metadata_term_v1.0.xsd"
+             xmlns:tx="http://metadata.internal.ft.com/metadata/xsd/metadata_taxonomy_v1.0.xsd" tx:name="sections">
+    <tx:term tm:status="ACTIVE" tm:externalTermId="116" tm:taxonomy="sections" b:id="MTE2-U2VjdGlvbnM=">
+        <tm:canonicalName>Comment</tm:canonicalName>
+        <tm:children>
+            <tm:term tm:status="ACTIVE" tm:externalTermId="121" tm:taxonomy="sections" b:id="MTIx-U2VjdGlvbnM=">
+                <tm:canonicalName>Blogs</tm:canonicalName>
+            </tm:term>
+        </tm:children>
+    </tx:term>
+</tx:taxonomy>

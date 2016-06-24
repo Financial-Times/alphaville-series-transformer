@@ -3,19 +3,18 @@ package main
 import (
 	"encoding/base64"
 	"encoding/xml"
+
 	"github.com/pborman/uuid"
 )
 
 func transformSeries(tmeTerm term, taxonomyName string) series {
 	tmeIdentifier := buildTmeIdentifier(tmeTerm.RawID, taxonomyName)
-	seriesUUID := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
+	uuid := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
+
 	return series{
-		UUID:       seriesUUID,
-		ProperName: tmeTerm.CanonicalName,
-		Identifiers: []identifier{
-			identifier{Authority: tmeAuthority, IdentifierValue: tmeIdentifier},
-			identifier{Authority: uppAuthority, IdentifierValue: seriesUUID},
-		},
+		UUID:                   uuid,
+		PrefLabel:              tmeTerm.CanonicalName,
+		AlternativeIdentifiers: alternativeIdentifiers{TME: []string{tmeIdentifier}, Uuids: []string{uuid}},
 		Type: "Series",
 	}
 }
