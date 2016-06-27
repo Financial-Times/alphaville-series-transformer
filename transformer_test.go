@@ -18,11 +18,11 @@ func TestTransform(t *testing.T) {
 			CanonicalName: "Africa Series",
 			RawID:         "Nstein_GL_AFTM_GL_164835"},
 			series{
-				UUID:      "adb4f804-c3b6-3eca-8708-5edeec653a27",
+				UUID:      "56a141a4-9894-3559-b25b-d0142f8148ff",
 				PrefLabel: "Africa Series",
 				AlternativeIdentifiers: alternativeIdentifiers{
-					TME:   []string{"TnN0ZWluX0dMX0FGVE1fR0xfMTY0ODM1-U2VjdGlvbnM="},
-					Uuids: []string{"adb4f804-c3b6-3eca-8708-5edeec653a27"},
+					TME:   []string{"TnN0ZWluX0dMX0FGVE1fR0xfMTY0ODM1-U2VyaWVz"},
+					Uuids: []string{"56a141a4-9894-3559-b25b-d0142f8148ff"},
 				},
 				Type: "Series"}},
 	}

@@ -20,8 +20,8 @@ func TestGetSeries(t *testing.T) {
 	}{
 		{"Success", "localhost:8080/transformers/series/",
 			[]term{term{CanonicalName: "Z_Archive", RawID: "b8337559-ac08-3404-9025-bad51ebe2fc7"}, term{CanonicalName: "Feature", RawID: "mNGQ2MWQ0NDMtMDc5Mi00NWExLTlkMGQtNWZhZjk0NGExOWU2-Z2VucVz"}},
-			[]seriesLink{seriesLink{APIURL: "localhost:8080/transformers/series/20ddda23-a1bb-3530-88aa-60232583895a"},
-				seriesLink{APIURL: "localhost:8080/transformers/series/cfd7a2d5-bc8f-3585-b98a-db69f7b8cfea"}}, true, nil},
+			[]seriesLink{seriesLink{APIURL: "localhost:8080/transformers/series/41c03fd4-8f24-3130-9f20-4d25c0909594"},
+				seriesLink{APIURL: "localhost:8080/transformers/series/44dc1ad7-76f1-39be-8ff1-3d5da91520ee"}}, true, nil},
 		{"Error on init", "localhost:8080/transformers/series/", []term{}, []seriesLink(nil), false, errors.New("Error getting taxonomy")},
 	}
 
@@ -46,7 +46,7 @@ func TestGetSeriesByUuid(t *testing.T) {
 		err    error
 	}{
 		{"Success", []term{term{CanonicalName: "Z_Archive", RawID: "b8337559-ac08-3404-9025-bad51ebe2fc7"}, term{CanonicalName: "Feature", RawID: "TkdRMk1XUTBORE10TURjNU1pMDBOV0V4TFRsa01HUXROV1poWmprME5HRXhPV1UyLVoyVnVjbVZ6-U2VjdGlvbnM=]"}},
-			"20ddda23-a1bb-3530-88aa-60232583895a", getDummySeries("20ddda23-a1bb-3530-88aa-60232583895a", "Z_Archive", "YjgzMzc1NTktYWMwOC0zNDA0LTkwMjUtYmFkNTFlYmUyZmM3-U2VjdGlvbnM="), true, nil},
+			"41c03fd4-8f24-3130-9f20-4d25c0909594", getDummySeries("41c03fd4-8f24-3130-9f20-4d25c0909594", "Z_Archive", "YjgzMzc1NTktYWMwOC0zNDA0LTkwMjUtYmFkNTFlYmUyZmM3-U2VyaWVz"), true, nil},
 		{"Not found", []term{term{CanonicalName: "Z_Archive", RawID: "845dc7d7-ae89-4fed-a819-9edcbb3fe507"}, term{CanonicalName: "Feature", RawID: "NGQ2MWdefsdfsfcmVz"}},
 			"some uuid", series{}, false, nil},
 		{"Error on init", []term{}, "some uuid", series{}, false, errors.New("Error getting taxonomy")},
