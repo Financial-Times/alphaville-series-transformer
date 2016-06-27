@@ -2,25 +2,34 @@ package main
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTransform(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
-		name string
-		term term
-		series  series
+		name   string
+		term   term
+		series series
 	}{
-		{"Trasform term to location", term{CanonicalName: "European Union", RawID: "Nstein_GL_US_NY_Municipality_942968"}, series{UUID: "6a7edb42-c27a-3186-a0b9-7e3cdc91e16b", ProperName: "European Union", Identifiers: []identifier{
-			identifier{Authority: tmeAuthority, IdentifierValue: "TnN0ZWluX0dMX1VTX05ZX011bmljaXBhbGl0eV85NDI5Njg=-T04="}, identifier{Authority: uppAuthority, IdentifierValue: "6a7edb42-c27a-3186-a0b9-7e3cdc91e16b"}}, Type: "Series"}},
+		{"Transform term to series", term{
+			CanonicalName: "Africa Series",
+			RawID:         "Nstein_GL_AFTM_GL_164835"},
+			series{
+				UUID:      "56a141a4-9894-3559-b25b-d0142f8148ff",
+				PrefLabel: "Africa Series",
+				AlternativeIdentifiers: alternativeIdentifiers{
+					TME:   []string{"TnN0ZWluX0dMX0FGVE1fR0xfMTY0ODM1-U2VyaWVz"},
+					Uuids: []string{"56a141a4-9894-3559-b25b-d0142f8148ff"},
+				},
+				Type: "Series"}},
 	}
 
 	for _, test := range tests {
-		expectedLocation := transformSeries(test.term, "ON")
-
-		assert.Equal(test.series, expectedLocation, fmt.Sprintf("%s: Expected location incorrect", test.name))
+		expectedSeries := transformSeries(test.term, "Series")
+		assert.Equal(test.series, expectedSeries, fmt.Sprintf("%s: Expected series incorrect", test.name))
 	}
 
 }

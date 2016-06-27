@@ -1,105 +1,60 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"sync"
-	"time"
+	"net/http"
 
 	"github.com/Financial-Times/tme-reader/tmereader"
 	log "github.com/Sirupsen/logrus"
-	"github.com/boltdb/bolt"
-	"github.com/pborman/uuid"
 )
 
-const (
-	cacheBucket  = "series"
-	uppAuthority = "http://api.ft.com/system/FT-UPP"
-	tmeAuthority = "http://api.ft.com/system/FT-TME"
-)
+type httpClient interface {
+	Do(req *http.Request) (resp *http.Response, err error)
+}
 
 type seriesService interface {
 	getSeries() ([]seriesLink, bool)
-	getSeriesByUUID(uuid string) (series, bool, error)
-	isInitialised() bool
+	getSeriesByUUID(uuid string) (series, bool)
+	checkConnectivity() error
 }
 
 type seriesServiceImpl struct {
 	repository    tmereader.Repository
 	baseURL       string
+	seriesMap     map[string]series
 	seriesLinks   []seriesLink
 	taxonomyName  string
 	maxTmeRecords int
-	initialised   bool
-	cacheFileName string
 }
 
-func newSeriesService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) seriesService {
-	s := &seriesServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: false, cacheFileName: cacheFileName}
-	go func(service *seriesServiceImpl) {
-		err := service.init()
-		if err != nil {
-			log.Errorf("Error while creating SeriesService: [%v]", err.Error())
-		}
-		service.initialised = true
-	}(s)
-	return s
-}
-
-func (s *seriesServiceImpl) isInitialised() bool {
-	return s.initialised
+func newSeriesService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int) (seriesService, error) {
+	s := &seriesServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords}
+	err := s.init()
+	if err != nil {
+		return &seriesServiceImpl{}, err
+	}
+	return s, nil
 }
 
 func (s *seriesServiceImpl) init() error {
-	db, err := bolt.Open(s.cacheFileName, 0600, &bolt.Options{Timeout: 1 * time.Second})
-	if err != nil {
-		log.Errorf("ERROR opening cache file for init: %v", err.Error())
-		return err
-	}
-
-	defer db.Close()
-	if err = createCacheBucket(db); err != nil {
-		return err
-	}
-
-	var wg sync.WaitGroup
+	s.seriesMap = make(map[string]series)
 	responseCount := 0
 	log.Printf("Fetching series from TME\n")
 	for {
 		terms, err := s.repository.GetTmeTermsFromIndex(responseCount)
-
 		if err != nil {
 			return err
 		}
 
 		if len(terms) < 1 {
-			log.Printf("Finished fetching series from TME. Waiting subroutines to terminate\n")
+			log.Printf("Finished fetching series from TME\n")
 			break
 		}
-
-		wg.Add(1)
-		go s.initSeriesMap(terms, db, &wg)
+		s.initSeriesMap(terms)
 		responseCount += s.maxTmeRecords
 	}
-
-	wg.Wait()
 	log.Printf("Added %d series links\n", len(s.seriesLinks))
+
 	return nil
-}
-
-func createCacheBucket(db *bolt.DB) error {
-	return db.Update(func(tx *bolt.Tx) error {
-		err := tx.DeleteBucket([]byte(cacheBucket))
-		if err != nil {
-			log.Warnf("Cache bucket [%v] could not be deleted\n", cacheBucket)
-		}
-		_, err = tx.CreateBucket([]byte(cacheBucket))
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-
 }
 
 func (s *seriesServiceImpl) getSeries() ([]seriesLink, bool) {
@@ -109,76 +64,26 @@ func (s *seriesServiceImpl) getSeries() ([]seriesLink, bool) {
 	return s.seriesLinks, false
 }
 
-func (s *seriesServiceImpl) getSeriesByUUID(uuid string) (series, bool, error) {
-	db, err := bolt.Open(s.cacheFileName, 0600, &bolt.Options{ReadOnly: true, Timeout: 10 * time.Second})
-	if err != nil {
-		log.Errorf("ERROR opening cache file for [%v]: %v", uuid, err.Error())
-		return series{}, false, err
-	}
-	defer db.Close()
-	var cachedValue []byte
-	err = db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte(cacheBucket))
-		if bucket == nil {
-			return fmt.Errorf("Bucket %v not found!", cacheBucket)
-		}
-		cachedValue = bucket.Get([]byte(uuid))
-		return nil
-	})
-
-	if err != nil {
-		log.Errorf("ERROR reading from cache file for [%v]: %v", uuid, err.Error())
-		return series{}, false, err
-	}
-	if cachedValue == nil || len(cachedValue) == 0 {
-		log.Infof("INFO No cached value for [%v]", uuid)
-		return series{}, false, nil
-	}
-	var cachedSeries series
-	err = json.Unmarshal(cachedValue, &cachedSeries)
-	if err != nil {
-		log.Errorf("ERROR unmarshalling cached value for [%v]: %v", uuid, err.Error())
-		return series{}, true, err
-	}
-	return cachedSeries, true, nil
-
+func (s *seriesServiceImpl) getSeriesByUUID(uuid string) (series, bool) {
+	series, found := s.seriesMap[uuid]
+	return series, found
 }
 
-func (s *seriesServiceImpl) initSeriesMap(terms []interface{}, db *bolt.DB, wg *sync.WaitGroup) {
-	var cacheToBeWritten []series
+func (s *seriesServiceImpl) checkConnectivity() error {
+	// TODO: Can we just hit an endpoint to check if TME is available? Or do we need to make sure we get genre taxonmies back? Maybe a healthcheck or gtg endpoint?
+	// TODO: Can we use a count from our responses while actually in use to trigger a healthcheck?
+	//	_, err := s.repository.GetTmeTermsFromIndex(1)
+	//	if err != nil {
+	//		return err
+	//	}
+	return nil
+}
+
+func (s *seriesServiceImpl) initSeriesMap(terms []interface{}) {
 	for _, iTerm := range terms {
 		t := iTerm.(term)
-		tmeIdentifier := buildTmeIdentifier(t.RawID, s.taxonomyName)
-		uuid := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
-		s.seriesLinks = append(s.seriesLinks, seriesLink{APIURL: s.baseURL + uuid})
-		cacheToBeWritten = append(cacheToBeWritten, transformSeries(t, s.taxonomyName))
+		top := transformSeries(t, s.taxonomyName)
+		s.seriesMap[top.UUID] = top
+		s.seriesLinks = append(s.seriesLinks, seriesLink{APIURL: s.baseURL + top.UUID})
 	}
-
-	go storeSeriesToCache(db, cacheToBeWritten, wg)
-}
-
-func storeSeriesToCache(db *bolt.DB, cacheToBeWritten []series, wg *sync.WaitGroup) {
-	defer wg.Done()
-	err := db.Batch(func(tx *bolt.Tx) error {
-
-		bucket := tx.Bucket([]byte(cacheBucket))
-		if bucket == nil {
-			return fmt.Errorf("Cache bucket [%v] not found!", cacheBucket)
-		}
-		for _, anSeries := range cacheToBeWritten {
-			marshalledSeries, err := json.Marshal(anSeries)
-			if err != nil {
-				return err
-			}
-			err = bucket.Put([]byte(anSeries.UUID), marshalledSeries)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		log.Errorf("ERROR storing to cache: %+v", err)
-	}
-
 }
