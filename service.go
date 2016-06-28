@@ -11,34 +11,34 @@ type httpClient interface {
 	Do(req *http.Request) (resp *http.Response, err error)
 }
 
-type seriesService interface {
-	getSeries() ([]seriesLink, bool)
-	getSeriesByUUID(uuid string) (series, bool)
+type alphavilleSeriesService interface {
+	getAlphavilleSeries() ([]alphavilleSeriesLink, bool)
+	getAlphavilleSeriesByUUID(uuid string) (alphavilleSeries, bool)
 	checkConnectivity() error
 }
 
-type seriesServiceImpl struct {
-	repository    tmereader.Repository
-	baseURL       string
-	seriesMap     map[string]series
-	seriesLinks   []seriesLink
-	taxonomyName  string
-	maxTmeRecords int
+type alphavilleSeriesServiceImpl struct {
+	repository            tmereader.Repository
+	baseURL               string
+	alphavilleSeriesMap   map[string]alphavilleSeries
+	alphavilleSeriesLinks []alphavilleSeriesLink
+	taxonomyName          string
+	maxTmeRecords         int
 }
 
-func newSeriesService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int) (seriesService, error) {
-	s := &seriesServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords}
+func newAlphavilleSeriesService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int) (alphavilleSeriesService, error) {
+	s := &alphavilleSeriesServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords}
 	err := s.init()
 	if err != nil {
-		return &seriesServiceImpl{}, err
+		return &alphavilleSeriesServiceImpl{}, err
 	}
 	return s, nil
 }
 
-func (s *seriesServiceImpl) init() error {
-	s.seriesMap = make(map[string]series)
+func (s *alphavilleSeriesServiceImpl) init() error {
+	s.alphavilleSeriesMap = make(map[string]alphavilleSeries)
 	responseCount := 0
-	log.Printf("Fetching series from TME\n")
+	log.Printf("Fetching alphavilleSeries from TME\n")
 	for {
 		terms, err := s.repository.GetTmeTermsFromIndex(responseCount)
 		if err != nil {
@@ -46,30 +46,30 @@ func (s *seriesServiceImpl) init() error {
 		}
 
 		if len(terms) < 1 {
-			log.Printf("Finished fetching series from TME\n")
+			log.Printf("Finished fetching alphavilleSeries from TME\n")
 			break
 		}
-		s.initSeriesMap(terms)
+		s.initAlphavilleSeriesMap(terms)
 		responseCount += s.maxTmeRecords
 	}
-	log.Printf("Added %d series links\n", len(s.seriesLinks))
+	log.Printf("Added %d alphavilleSeries links\n", len(s.alphavilleSeriesLinks))
 
 	return nil
 }
 
-func (s *seriesServiceImpl) getSeries() ([]seriesLink, bool) {
-	if len(s.seriesLinks) > 0 {
-		return s.seriesLinks, true
+func (s *alphavilleSeriesServiceImpl) getAlphavilleSeries() ([]alphavilleSeriesLink, bool) {
+	if len(s.alphavilleSeriesLinks) > 0 {
+		return s.alphavilleSeriesLinks, true
 	}
-	return s.seriesLinks, false
+	return s.alphavilleSeriesLinks, false
 }
 
-func (s *seriesServiceImpl) getSeriesByUUID(uuid string) (series, bool) {
-	series, found := s.seriesMap[uuid]
-	return series, found
+func (s *alphavilleSeriesServiceImpl) getAlphavilleSeriesByUUID(uuid string) (alphavilleSeries, bool) {
+	alphavilleSeries, found := s.alphavilleSeriesMap[uuid]
+	return alphavilleSeries, found
 }
 
-func (s *seriesServiceImpl) checkConnectivity() error {
+func (s *alphavilleSeriesServiceImpl) checkConnectivity() error {
 	// TODO: Can we just hit an endpoint to check if TME is available? Or do we need to make sure we get genre taxonmies back? Maybe a healthcheck or gtg endpoint?
 	// TODO: Can we use a count from our responses while actually in use to trigger a healthcheck?
 	//	_, err := s.repository.GetTmeTermsFromIndex(1)
@@ -79,11 +79,11 @@ func (s *seriesServiceImpl) checkConnectivity() error {
 	return nil
 }
 
-func (s *seriesServiceImpl) initSeriesMap(terms []interface{}) {
+func (s *alphavilleSeriesServiceImpl) initAlphavilleSeriesMap(terms []interface{}) {
 	for _, iTerm := range terms {
 		t := iTerm.(term)
-		top := transformSeries(t, s.taxonomyName)
-		s.seriesMap[top.UUID] = top
-		s.seriesLinks = append(s.seriesLinks, seriesLink{APIURL: s.baseURL + top.UUID})
+		top := transformAlphavilleSeries(t, s.taxonomyName)
+		s.alphavilleSeriesMap[top.UUID] = top
+		s.alphavilleSeriesLinks = append(s.alphavilleSeriesLinks, alphavilleSeriesLink{APIURL: s.baseURL + top.UUID})
 	}
 }

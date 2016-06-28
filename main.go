@@ -24,7 +24,7 @@ func init() {
 }
 
 func main() {
-	app := cli.App("v1-series-transformer", "A RESTful API for transforming TME Series to UP json")
+	app := cli.App("alphaville-series-transformer", "A RESTful API for transforming TME AlphavilleSeries to UP json")
 	username := app.String(cli.StringOpt{
 		Name:   "tme-username",
 		Value:  "",
@@ -45,7 +45,7 @@ func main() {
 	})
 	baseURL := app.String(cli.StringOpt{
 		Name:   "base-url",
-		Value:  "http://localhost:8080/transformers/series/",
+		Value:  "http://localhost:8080/transformers/alphavilleseries/",
 		Desc:   "Base url",
 		EnvVar: "BASE_URL",
 	})
@@ -74,18 +74,18 @@ func main() {
 		EnvVar: "SLICES",
 	})
 
-	tmeTaxonomyName := "topics" // TODO: Change to 'series' once the new taxonomy is ready.
+	tmeTaxonomyName := "topics" // TODO: Change to 'alphaville-series' once the new taxonomy is ready.
 
 	app.Action = func() {
 		client := getResilientClient()
 
-		mf := new(seriesTransformer)
-		s, err := newSeriesService(tmereader.NewTmeRepository(client, *tmeBaseURL, *username, *password, *token, *maxRecords, *slices, tmeTaxonomyName, &tmereader.KnowledgeBases{}, mf), *baseURL, tmeTaxonomyName, *maxRecords)
+		mf := new(alphavilleSeriesTransformer)
+		s, err := newAlphavilleSeriesService(tmereader.NewTmeRepository(client, *tmeBaseURL, *username, *password, *token, *maxRecords, *slices, tmeTaxonomyName, &tmereader.KnowledgeBases{}, mf), *baseURL, tmeTaxonomyName, *maxRecords)
 		if err != nil {
-			log.Errorf("Error while creating SeriesService: [%v]", err.Error())
+			log.Errorf("Error while creating AlphavilleSeriesService: [%v]", err.Error())
 		}
 
-		h := newSeriesHandler(s)
+		h := newAlphavilleSeriesHandler(s)
 		m := mux.NewRouter()
 
 		// The top one of these feels more correct, but the lower one matches what we have in Dropwizard,
@@ -94,11 +94,11 @@ func main() {
 		m.HandleFunc(status.PingPathDW, status.PingHandler)
 		m.HandleFunc(status.BuildInfoPath, status.BuildInfoHandler)
 		m.HandleFunc(status.BuildInfoPathDW, status.BuildInfoHandler)
-		m.HandleFunc("/__health", v1a.Handler("Series Transformer Healthchecks", "Checks for accessing TME", h.HealthCheck()))
+		m.HandleFunc("/__health", v1a.Handler("Alphaville Series Transformer Healthchecks", "Checks for accessing TME", h.HealthCheck()))
 		m.HandleFunc("/__gtg", h.GoodToGo)
 
-		m.HandleFunc("/transformers/series", h.getSeries).Methods("GET")
-		m.HandleFunc("/transformers/series/{uuid}", h.getSeriesByUUID).Methods("GET")
+		m.HandleFunc("/transformers/alphavilleseries", h.getAlphavilleSeries).Methods("GET")
+		m.HandleFunc("/transformers/alphavilleseries/{uuid}", h.getAlphavilleSeriesByUUID).Methods("GET")
 
 		http.Handle("/", m)
 

@@ -1,9 +1,9 @@
 FROM alpine:3.3
-ADD . /v1-series-transformer/
-ADD *.go .git /v1-series-transformer/
+ADD . /alphaville-series-transformer/
+ADD *.go .git /alphaville-series-transformer/
 RUN apk add --update bash \
   && apk --update add git go bzr \
-  && cd v1-series-transformer \
+  && cd alphaville-series-transformer \
   && git fetch origin 'refs/tags/*:refs/tags/*' \
   && BUILDINFO_PACKAGE="github.com/Financial-Times/service-status-go/buildinfo." \
   && VERSION="version=$(git describe --tag --always 2> /dev/null)" \
@@ -14,15 +14,15 @@ RUN apk add --update bash \
   && LDFLAGS="-X '"${BUILDINFO_PACKAGE}$VERSION"' -X '"${BUILDINFO_PACKAGE}$DATETIME"' -X '"${BUILDINFO_PACKAGE}$REPOSITORY"' -X '"${BUILDINFO_PACKAGE}$REVISION"' -X '"${BUILDINFO_PACKAGE}$BUILDER"'" \
   && cd .. \
   && export GOPATH=/gopath \
-  && REPO_PATH="github.com/Financial-Times/v1-series-transformer" \
+  && REPO_PATH="github.com/Financial-Times/alphaville-series-transformer" \
   && mkdir -p $GOPATH/src/${REPO_PATH} \
-  && cp -r v1-series-transformer/* $GOPATH/src/${REPO_PATH} \
+  && cp -r alphaville-series-transformer/* $GOPATH/src/${REPO_PATH} \
   && cd $GOPATH/src/${REPO_PATH} \
   && go get -t ./... \
   && cd $GOPATH/src/${REPO_PATH} \
   && echo ${LDFLAGS} \
   && go build -ldflags="${LDFLAGS}" \
-  && mv v1-series-transformer /app \
+  && mv alphaville-series-transformer /app \
   && apk del go git bzr\
   && rm -rf $GOPATH /var/cache/apk/*
 CMD [ "/app" ]

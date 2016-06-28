@@ -1,6 +1,6 @@
 package main
 
-type series struct {
+type alphavilleSeries struct {
 	UUID                   string                 `json:"uuid"`
 	AlternativeIdentifiers alternativeIdentifiers `json:"alternativeIdentifiers,omitempty"`
 	PrefLabel              string                 `json:"prefLabel"`
@@ -12,6 +12,6 @@ type alternativeIdentifiers struct {
 	Uuids []string `json:"uuids,omitempty"`
 }
 
-type seriesLink struct {
+type alphavilleSeriesLink struct {
 	APIURL string `json:"apiUrl"`
 }
