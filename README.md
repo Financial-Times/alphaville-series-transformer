@@ -8,11 +8,11 @@ The service exposes endpoints for getting all the series and for getting series 
 # Usage
 `go get -u github.com/Financial-Times/alphaville-series-transformer`
 
-`$GOPATH/bin/alphaville-series-transformer --port=8080 --base-url="http://localhost:8080/transformers/series/" --tme-base-url="https://tme.ft.com" --tme-username="user" --tme-password="pass" --token="token"`
+`$GOPATH/bin/alphaville-series-transformer --port=8080 --base-url="http://localhost:8080/transformers/alphavillleseries/" --tme-base-url="https://tme.ft.com" --tme-username="user" --tme-password="pass" --token="token"`
 
 ```
 export|set PORT=8080
-export|set BASE_URL="http://localhost:8080/transformers/series/"
+export|set BASE_URL="http://localhost:8080/transformers/alphavillleseries/"
 export|set TME_BASE_URL="https://tme.ft.com"
 export|set TME_USERNAME="user"
 export|set TME_PASSWORD="pass"
