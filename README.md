@@ -1,6 +1,6 @@
 # Alphaville Series Transformer
 
-[![Circle CI](https://circleci.com/gh/Financial-Times/v1-series-transformer/tree/master.png?style=shield)](https://circleci.com/gh/Financial-Times/v1-series-transformer/tree/master)
+[![CircleCI](https://circleci.com/gh/Financial-Times/alphaville-series-transformer.svg?style=svg)](https://circleci.com/gh/Financial-Times/alphaville-series-transformer)
 
 Retrieves Alphaville Series taxonomy from TME and transforms the series to the internal UP json model.
 The service exposes endpoints for getting all the series and for getting series by uuid.
