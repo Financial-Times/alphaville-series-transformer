@@ -38,7 +38,7 @@ func newAlphavilleSeriesService(repo tmereader.Repository, baseURL string, taxon
 func (s *alphavilleSeriesServiceImpl) init() error {
 	s.alphavilleSeriesMap = make(map[string]alphavilleSeries)
 	responseCount := 0
-	log.Printf("Fetching alphavilleSeries from TME\n")
+	log.Printf("Fetching Alphaville Series from TME\n")
 	for {
 		terms, err := s.repository.GetTmeTermsFromIndex(responseCount)
 		if err != nil {
@@ -46,13 +46,13 @@ func (s *alphavilleSeriesServiceImpl) init() error {
 		}
 
 		if len(terms) < 1 {
-			log.Printf("Finished fetching alphavilleSeries from TME\n")
+			log.Printf("Finished fetching Alphaville Series from TME\n")
 			break
 		}
 		s.initAlphavilleSeriesMap(terms)
 		responseCount += s.maxTmeRecords
 	}
-	log.Printf("Added %d alphavilleSeries links\n", len(s.alphavilleSeriesLinks))
+	log.Printf("Added %d Alphaville Series links\n", len(s.alphavilleSeriesLinks))
 
 	return nil
 }
