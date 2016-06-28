@@ -29,5 +29,5 @@ $GOPATH/bin/alphaville-series-transformer
 
 # Endpoints
 
-* `/transformers/series` - Get all series as APIURLs
-* `/transformers/series/{uuid}` - Get series data of the given uuid
+* `/transformers/alphavillleseries` - Get all alphavillle series as APIURLs
+* `/transformers/alphavillleseries/{uuid}` - Get alphavillle series data of the given uuid
