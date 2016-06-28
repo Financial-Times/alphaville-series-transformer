@@ -74,7 +74,7 @@ func main() {
 		EnvVar: "SLICES",
 	})
 
-	tmeTaxonomyName := "series"
+	tmeTaxonomyName := "topics" // TODO: Change to 'series' once the new taxonomy is ready.
 
 	app.Action = func() {
 		client := getResilientClient()
