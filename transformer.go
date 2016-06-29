@@ -7,15 +7,15 @@ import (
 	"github.com/pborman/uuid"
 )
 
-func transformSeries(tmeTerm term, taxonomyName string) series {
+func transformAlphavilleSeries(tmeTerm term, taxonomyName string) alphavilleSeries {
 	tmeIdentifier := buildTmeIdentifier(tmeTerm.RawID, taxonomyName)
 	uuid := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
 
-	return series{
+	return alphavilleSeries{
 		UUID:                   uuid,
 		PrefLabel:              tmeTerm.CanonicalName,
 		AlternativeIdentifiers: alternativeIdentifiers{TME: []string{tmeIdentifier}, Uuids: []string{uuid}},
-		Type: "Series",
+		Type: "AlphavilleSeries",
 	}
 }
 
@@ -25,10 +25,10 @@ func buildTmeIdentifier(rawID string, tmeTermTaxonomyName string) string {
 	return id + "-" + taxonomyName
 }
 
-type seriesTransformer struct {
+type alphavilleSeriesTransformer struct {
 }
 
-func (*seriesTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
+func (*alphavilleSeriesTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
 	taxonomy := taxonomy{}
 	err := xml.Unmarshal(contents, &taxonomy)
 	if err != nil {
@@ -41,7 +41,7 @@ func (*seriesTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, er
 	return interfaces, nil
 }
 
-func (*seriesTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
+func (*alphavilleSeriesTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
 	dummyTerm := term{}
 	err := xml.Unmarshal(content, &dummyTerm)
 	if err != nil {

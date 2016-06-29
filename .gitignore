@@ -6,5 +6,5 @@ target
 .project
 /bin
 /target/
-v1-series-transformer
+alphaville-series-transformer
 cache.db
