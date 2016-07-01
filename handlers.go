@@ -44,6 +44,16 @@ func (h *alphavilleSeriesHandler) getAlphavilleSeries(writer http.ResponseWriter
 	writeJSONResponse(obj, found, writer)
 }
 
+func (h *alphavilleSeriesHandler) getAlphavilleSeriesIds(writer http.ResponseWriter, req *http.Request) {
+	obj, found := h.service.getAlphavilleSeriesIds()
+	writeJSONResponse(obj, found, writer)
+}
+
+func (h *alphavilleSeriesHandler) getAlphavilleSeriesCount(writer http.ResponseWriter, req *http.Request) {
+	count := h.service.getAlphavilleSeriesCount()
+	writeJSONResponse(count, true, writer)
+}
+
 func (h *alphavilleSeriesHandler) getAlphavilleSeriesByUUID(writer http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	uuid := vars["uuid"]
