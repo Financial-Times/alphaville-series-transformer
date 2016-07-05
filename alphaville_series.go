@@ -15,3 +15,7 @@ type alternativeIdentifiers struct {
 type alphavilleSeriesLink struct {
 	APIURL string `json:"apiUrl"`
 }
+
+type idEntry struct {
+	ID string `json:"id"`
+}

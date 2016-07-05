@@ -13,7 +13,9 @@ type httpClient interface {
 
 type alphavilleSeriesService interface {
 	getAlphavilleSeries() ([]alphavilleSeriesLink, bool)
+	getAlphavilleSeriesIds() ([]idEntry, bool)
 	getAlphavilleSeriesByUUID(uuid string) (alphavilleSeries, bool)
+	getAlphavilleSeriesCount() int
 	checkConnectivity() error
 }
 
@@ -62,6 +64,24 @@ func (s *alphavilleSeriesServiceImpl) getAlphavilleSeries() ([]alphavilleSeriesL
 		return s.alphavilleSeriesLinks, true
 	}
 	return s.alphavilleSeriesLinks, false
+}
+
+func (s *alphavilleSeriesServiceImpl) getAlphavilleSeriesIds() ([]idEntry, bool) {
+	if len(s.alphavilleSeriesMap) > 0 {
+		ids := make([]idEntry, len(s.alphavilleSeriesMap))
+		i := 0
+		for k := range s.alphavilleSeriesMap {
+			ids[i] = idEntry{k}
+			i++
+		}
+		return ids, true
+	}
+
+	return make([]idEntry, 0), false
+}
+
+func (s *alphavilleSeriesServiceImpl) getAlphavilleSeriesCount() int {
+	return len(s.alphavilleSeriesMap)
 }
 
 func (s *alphavilleSeriesServiceImpl) getAlphavilleSeriesByUUID(uuid string) (alphavilleSeries, bool) {

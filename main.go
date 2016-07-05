@@ -98,7 +98,9 @@ func main() {
 		m.HandleFunc("/__gtg", h.GoodToGo)
 
 		m.HandleFunc("/transformers/alphavilleseries", h.getAlphavilleSeries).Methods("GET")
-		m.HandleFunc("/transformers/alphavilleseries/{uuid}", h.getAlphavilleSeriesByUUID).Methods("GET")
+		m.HandleFunc("/transformers/alphavilleseries/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getAlphavilleSeriesByUUID).Methods("GET")
+		m.HandleFunc("/transformers/alphavilleseries/__ids", h.getAlphavilleSeriesIds).Methods("GET")
+		m.HandleFunc("/transformers/alphavilleseries/__count", h.getAlphavilleSeriesCount).Methods("GET")
 
 		http.Handle("/", m)
 
