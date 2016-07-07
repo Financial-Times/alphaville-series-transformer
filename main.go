@@ -95,7 +95,7 @@ func main() {
 		m.HandleFunc(status.BuildInfoPath, status.BuildInfoHandler)
 		m.HandleFunc(status.BuildInfoPathDW, status.BuildInfoHandler)
 		m.HandleFunc("/__health", v1a.Handler("Alphaville Series Transformer Healthchecks", "Checks for accessing TME", h.HealthCheck()))
-		m.HandleFunc("/__gtg", h.GoodToGo)
+		m.HandleFunc(status.GTGPath, h.GoodToGo)
 
 		m.HandleFunc("/transformers/alphavilleseries", h.getAlphavilleSeries).Methods("GET")
 		m.HandleFunc("/transformers/alphavilleseries/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getAlphavilleSeriesByUUID).Methods("GET")

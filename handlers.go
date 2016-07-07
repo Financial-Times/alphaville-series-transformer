@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
 	"github.com/Financial-Times/go-fthealth/v1a"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
@@ -45,13 +44,26 @@ func (h *alphavilleSeriesHandler) getAlphavilleSeries(writer http.ResponseWriter
 }
 
 func (h *alphavilleSeriesHandler) getAlphavilleSeriesIds(writer http.ResponseWriter, req *http.Request) {
-	obj, found := h.service.getAlphavilleSeriesIds()
-	writeJSONResponse(obj, found, writer)
+	obj, _ := h.service.getAlphavilleSeriesIds()
+	streamJSONResponse(obj, writer)
+}
+
+func streamJSONResponse(ids []idEntry, writer http.ResponseWriter) {
+	if len(ids) < 1 {
+		writer.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	for _, k := range ids {
+		enc := json.NewEncoder(writer)
+		enc.Encode(k)
+	}
+
 }
 
 func (h *alphavilleSeriesHandler) getAlphavilleSeriesCount(writer http.ResponseWriter, req *http.Request) {
 	count := h.service.getAlphavilleSeriesCount()
-	writeJSONResponse(count, true, writer)
+	fmt.Fprintf(writer, "%d", count)
 }
 
 func (h *alphavilleSeriesHandler) getAlphavilleSeriesByUUID(writer http.ResponseWriter, req *http.Request) {
