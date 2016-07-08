@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "net/http/pprof"
 	"crypto/tls"
 	"fmt"
 	"net"
@@ -74,13 +75,18 @@ func main() {
 		EnvVar: "SLICES",
 	})
 
-	tmeTaxonomyName := "topics" // TODO: Change to 'alphaville-series' once the new taxonomy is ready.
+	tmeTaxonomyName := app.String(cli.StringOpt {
+		Name:   "tme-taxonomy-name",
+		Value:  "alphavilleseries",
+		Desc:   "TME taxonomy name for Alphaville Series",
+		EnvVar: "TME_TAXONOMY_NAME",
+	})
 
 	app.Action = func() {
 		client := getResilientClient()
 
 		mf := new(alphavilleSeriesTransformer)
-		s, err := newAlphavilleSeriesService(tmereader.NewTmeRepository(client, *tmeBaseURL, *username, *password, *token, *maxRecords, *slices, tmeTaxonomyName, &tmereader.KnowledgeBases{}, mf), *baseURL, tmeTaxonomyName, *maxRecords)
+		s, err := newAlphavilleSeriesService(tmereader.NewTmeRepository(client, *tmeBaseURL, *username, *password, *token, *maxRecords, *slices, *tmeTaxonomyName, &tmereader.KnowledgeBases{}, mf), *baseURL, *tmeTaxonomyName, *maxRecords)
 		if err != nil {
 			log.Errorf("Error while creating AlphavilleSeriesService: [%v]", err.Error())
 		}
@@ -95,7 +101,7 @@ func main() {
 		m.HandleFunc(status.BuildInfoPath, status.BuildInfoHandler)
 		m.HandleFunc(status.BuildInfoPathDW, status.BuildInfoHandler)
 		m.HandleFunc("/__health", v1a.Handler("Alphaville Series Transformer Healthchecks", "Checks for accessing TME", h.HealthCheck()))
-		m.HandleFunc("/__gtg", h.GoodToGo)
+		m.HandleFunc(status.GTGPath, h.GoodToGo)
 
 		m.HandleFunc("/transformers/alphavilleseries", h.getAlphavilleSeries).Methods("GET")
 		m.HandleFunc("/transformers/alphavilleseries/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getAlphavilleSeriesByUUID).Methods("GET")
