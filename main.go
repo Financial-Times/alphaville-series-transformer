@@ -46,7 +46,7 @@ func main() {
 	})
 	baseURL := app.String(cli.StringOpt{
 		Name:   "base-url",
-		Value:  "http://localhost:8080/transformers/alphavilleseries/",
+		Value:  "http://localhost:8080/transformers/alphaville-series/",
 		Desc:   "Base url",
 		EnvVar: "BASE_URL",
 	})
@@ -77,7 +77,7 @@ func main() {
 
 	tmeTaxonomyName := app.String(cli.StringOpt {
 		Name:   "tme-taxonomy-name",
-		Value:  "alphavilleseries",
+		Value:  "alphaville-series",
 		Desc:   "TME taxonomy name for Alphaville Series",
 		EnvVar: "TME_TAXONOMY_NAME",
 	})
@@ -103,10 +103,10 @@ func main() {
 		m.HandleFunc("/__health", v1a.Handler("Alphaville Series Transformer Healthchecks", "Checks for accessing TME", h.HealthCheck()))
 		m.HandleFunc(status.GTGPath, h.GoodToGo)
 
-		m.HandleFunc("/transformers/alphavilleseries", h.getAlphavilleSeries).Methods("GET")
-		m.HandleFunc("/transformers/alphavilleseries/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getAlphavilleSeriesByUUID).Methods("GET")
-		m.HandleFunc("/transformers/alphavilleseries/__ids", h.getAlphavilleSeriesIds).Methods("GET")
-		m.HandleFunc("/transformers/alphavilleseries/__count", h.getAlphavilleSeriesCount).Methods("GET")
+		m.HandleFunc("/transformers/alphaville-series", h.getAlphavilleSeries).Methods("GET")
+		m.HandleFunc("/transformers/alphaville-series/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getAlphavilleSeriesByUUID).Methods("GET")
+		m.HandleFunc("/transformers/alphaville-series/__ids", h.getAlphavilleSeriesIds).Methods("GET")
+		m.HandleFunc("/transformers/alphaville-series/__count", h.getAlphavilleSeriesCount).Methods("GET")
 
 		http.Handle("/", m)
 
