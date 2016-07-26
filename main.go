@@ -1,11 +1,11 @@
 package main
 
 import (
-	_ "net/http/pprof"
 	"crypto/tls"
 	"fmt"
 	"net"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"time"
 
@@ -75,9 +75,9 @@ func main() {
 		EnvVar: "SLICES",
 	})
 
-	tmeTaxonomyName := app.String(cli.StringOpt {
+	tmeTaxonomyName := app.String(cli.StringOpt{
 		Name:   "tme-taxonomy-name",
-		Value:  "alphaville-series",
+		Value:  "AlphavilleSeriesClassification",
 		Desc:   "TME taxonomy name for Alphaville Series",
 		EnvVar: "TME_TAXONOMY_NAME",
 	})
