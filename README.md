@@ -1,3 +1,5 @@
+*DECOMISSIONED*
+See [Basic TME Transformer|https://github.com/Financial-Times/basic-tme-transformer] instead
 # Alphaville Series Transformer
 
 [![CircleCI](https://circleci.com/gh/Financial-Times/alphaville-series-transformer.svg?style=svg)](https://circleci.com/gh/Financial-Times/alphaville-series-transformer)
